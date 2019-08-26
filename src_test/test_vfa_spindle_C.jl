@@ -7,7 +7,7 @@ plt = plot_path(CCNB1, pMPS1, pENSA)
 grid_ranges = [range(0, step=0.1, stop=1), range(0, step=0.1, stop=1), range(0, step=0.1, stop=1)]
 coord_list = get_coord_list(grid_ranges)
 ##################
-@load "../data/spindle_C.bson" dudt
+@load "spindle_C.bson" dudt
 pred = n_ode(u0)
 scatter(t, ode_data[1,:], label = string("Observation: ", species[1]), grid = "off", ylim=[0,1.3])
 scatter!(t, ode_data[2,:], label = string("Observation: ", species[2]))
