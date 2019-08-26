@@ -1,5 +1,5 @@
 module vfa #Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics,
-    using LinearAlgebra
-    include("vfa.jl")
-    export hellowold;
+    export vfa_1, spindle_C
+    include("vfa_methods.jl")
+    include("../data/spindle_C.jl")
 end
