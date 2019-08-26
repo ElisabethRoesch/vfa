@@ -1,5 +1,7 @@
 module vfa #Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics,
-    export vfa_1, get_spindle_data
+    using Plots
+    export get_spindle_C_data, plot_path, get_coord_list
     include("vfa_methods.jl")
     include("../data/spindle_C.jl")
+    include("../visualize/pre_ana.jl")
 end

@@ -1,5 +1,5 @@
 Pkg to investigate vector field of neural ODE.
-
+To use: push!(LOAD_PATH, "<where it is>")
 Idea:
 In src:
 In vector_field_analysis.jl name all dependencies.
