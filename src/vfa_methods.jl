@@ -1,5 +1,6 @@
 function get_coord_list(grid_ranges)
-    coord_list = []
+    len = length(grid_ranges[1])*length(grid_ranges[2])*length(grid_ranges[3])
+    coord_list = Array{Float32,2}(undef, length(grid_ranges),len)
     for i in grid_ranges[1]
         for j in grid_ranges[2]
             for k in grid_ranges[3]
