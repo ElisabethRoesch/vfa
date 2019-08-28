@@ -1,9 +1,9 @@
-push!(LOAD_PATH, "/Users/eroesch/github") #Plots
-using vfa, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
+push!(LOAD_PATH, "/Users/eroesch/github")
+using vfa, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
 using BSON: @save, @load
 ##################
 CCNB1, pMPS1, pENSA = get_spindle_C_data()
-#plt = plot_path(CCNB1, pMPS1, pENSA)
+plt_path = plot_path(CCNB1, pMPS1, pENSA)
 grid_ranges = [range(0, step=0.1, stop=1), range(0, step=0.1, stop=1), range(0, step=0.1, stop=1)]
 coord_list = get_coord_list(grid_ranges)
 ##################
@@ -25,7 +25,7 @@ n_ode = x->neural_ode(dudt, x, tspan, Rosenbrock23(autodiff=false), saveat=t, re
 pred = n_ode(u0)
 grad_list, end_coord_list = get_grad_and_end_point_list(coord_list, dudt)
 
-
+print("h")
 #plt = scatter(t, ode_data[1,:], label = string("Observation: ", species[1]), grid = "off", ylim=[0,1.3])
 #scatter!(t, ode_data[2,:], label = string("Observation: ", species[2]))
 #scatter!(t, ode_data[3,:], label = string("Observation: ", species[3]))
