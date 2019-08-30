@@ -4,6 +4,14 @@ using BSON: @save, @load
 ##################
 CCNB1, pMPS1, pENSA = get_spindle_C_data()
 plt_path = plot_path(CCNB1, pMPS1, pENSA)
+all = hcat(CCNB1, pMPS1, pENSA)
+CCNB1
+all[1,:]
+plt = plot3d(CCNB1, pMPS1, pENSA, xlab = "CCNB1", ylab = "pMPS1", zlab  = "pENSA",
+            grid = "off", legend = :bottomright, label = "path")
+scatter!(aCCNB1, pMPS1, pENSA)
+
+
 grid_ranges = [range(0, step=0.1, stop=1), range(0, step=0.1, stop=1), range(0, step=0.1, stop=1)]
 coord_list = get_coord_list(grid_ranges)
 ##################
