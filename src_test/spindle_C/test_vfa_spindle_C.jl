@@ -6,7 +6,7 @@ CCNB1, pMPS1, pENSA = get_spindle_C_data()
 plt_path = plot_path(CCNB1[:,2], pMPS1[:,2], pENSA[:,2])
 display(plt_path)
 ################## Set points to get gradients of neural ODE.
-grid_ranges = [range(0, step=0.1, stop=1), range(0, step=0.1, stop=1), range(0, step=0.1, stop=1)]
+grid_ranges = [range(0, step = 0.1, stop = 1), range(0, step = 0.1, stop = 1), range(0, step = 0.1, stop = 1)]
 coord_list = get_coord_list(grid_ranges)
 ################## Get neural ODE model.
 @load "src_test/spindle_C/spindle_C.bson" dudt
