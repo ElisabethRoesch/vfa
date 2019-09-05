@@ -29,6 +29,7 @@ grad_list, end_coord_list = get_grad_and_end_point_list(coord_list, dudt)
 ################## Prediction on training data (species over time).
 plt_train = plot_train(t, ode_data, pred, species)
 display(plt_train)
+savefig("train_plot.pdf")
 ################## Visualise vector field via quiver with observed path (no time dim).
 plt_quiver = plot_quiver(coord_list, grad_list, species, a, b, c)
 display(plt_quiver)
