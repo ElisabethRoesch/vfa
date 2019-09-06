@@ -7,14 +7,14 @@ b = pMPS1[:,2]
 c = pENSA[:,2]
 ode_data = transpose(hcat( a,b,c))
 u0 = ode_data[:,1]
-tspan = (0.,1.)
+tspan = (0., 1.)
 if(CCNB1[1]>0)
-    t = CCNB1[:,1].-(CCNB1[1])
+    t = CCNB1[:,1].- (CCNB1[1])
 else
-    t = CCNB1[:,1].+abs(CCNB1[1])
+    t = CCNB1[:,1].+ abs(CCNB1[1])
 end
 t = t./t[end]
-species = ["CCNB1", "pMPS1", "pENSA"];u0
+species = ["CCNB1", "pMPS1", "pENSA"]
 mutable struct saver
     losses::Array{Float64,1}
     l2s::Array{Float64,1}
