@@ -26,7 +26,7 @@ t = t./t[end]
 n_ode = x->neural_ode(dudt, x, tspan, Rosenbrock23(autodiff=false), saveat=t, reltol=1e-7, abstol=1e-9)
 pred = n_ode(u0)
 grad_list, end_coord_list = get_grad_and_end_point_list(coord_list, dudt)
-################## Prediction on training data (species over time).
+################## Prediction on training data, species over time.
 plt_train = plot_train(t, ode_data, pred, species)
 display(plt_train)
 savefig("train_plot.pdf")
