@@ -1,3 +1,4 @@
+#returns points on a grid ad array
 function get_coord_list(grid_ranges)
     len = length(grid_ranges[1])*length(grid_ranges[2])*length(grid_ranges[3])
     coord_list = Array{Float64,2}(undef, length(grid_ranges),len)
@@ -12,7 +13,7 @@ function get_coord_list(grid_ranges)
     end
     return coord_list
 end
-
+# returns gradients and end coordiante as arrays
 function get_grad_and_end_point_list(coord_list, dudt)
     grad_list = Array{Float64,2}(undef, size(coord_list)[1], size(coord_list)[2])
     end_coord_list = Array{Float64,2}(undef, size(coord_list)[1], size(coord_list)[2])
