@@ -1,7 +1,7 @@
 push!(LOAD_PATH, "/Users/eroesch/github")
 using vfa, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
 using BSON: @save, @load
-################## Get observed data.
+################## Get observed data. 
 CCNB1, pMPS1, pENSA = get_spindle_C_data()
 plt_path = plot_path(CCNB1[:,2], pMPS1[:,2], pENSA[:,2])
 display(plt_path)
