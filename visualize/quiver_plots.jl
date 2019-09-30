@@ -11,3 +11,9 @@ function plot_quiver(coord_list, grad_list, species, a, b, c)
     scatter!(a, b, c, label = "Path", legend = :bottomleft)
     return plt
 end
+function plot_quiver(coord_list, grad_list, species, a, b, c)
+    plt = quiver(coord_list, quiver = (grad_list[1]), xlab = "CCNB1", ylab = "pMPS1", zlab  = "pENSA", projection="3d")
+    plot!(a, b, c, label = "", grid = "off")
+    scatter!(a, b, c, label = "Path", legend = :bottomleft)
+    return plt
+end

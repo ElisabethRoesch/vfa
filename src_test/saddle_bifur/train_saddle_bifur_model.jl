@@ -96,4 +96,4 @@ plot(t, Flux.data(pred[1,:]), label = string("trianed pred "), grid = "off")
 pred = n_ode([200.])
 plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species1))
 # Delete readme for this!
-@save "saddle_bifur.bson" dudt
+# @save "saddle_bifur.bson" dudt

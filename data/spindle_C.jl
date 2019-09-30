@@ -59,3 +59,5 @@ function get_spindle_C_data()
      return pENSA, pMPS1, CCNB1
 
 end
+
+a = get_spindle_C_data()

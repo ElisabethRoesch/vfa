@@ -1,7 +1,12 @@
 #Plot observation in state space (no time dim).
-function plot_path(a, b, c)
+function plot_path_3d(a, b, c)
     plt = plot(a, b, c, xlab = "CCNB1", ylab = "pMPS1", zlab  = "pENSA", label = "", grid = "off", legend = :bottomright)
     scatter!(a, b, c, label = "Path", legend= :topleft)
+    return plt
+end
+function plot_path_1d(a)
+    plt = plot(ones(length(a)), a, xlab = "Saddle-node bifurcation", label = "", grid = "off", legend = :bottomright)
+    scatter!(ones(length(a)),a,label = "Path")
     return plt
 end
 # Plot observed data and pred over time of training data.
@@ -12,5 +17,12 @@ function plot_train(t, ode_data, pred, species)
     plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species[1]))
     plot!(t, Flux.data(pred[2,:]), label = string("Prediction: ", species[2]))
     plot!(t, Flux.data(pred[3,:]), label = string("Prediction: ", species[3]))
+    return plt_train
+end
+function plot_train_1d(t, ode_data, pred, species)
+    plt_train = scatter(t, ode_data[1,:], label = string("Observation: ", species[1]), grid = "off", ylim=[0,1.3])
+
+    plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species[1]))
+
     return plt_train
 end
