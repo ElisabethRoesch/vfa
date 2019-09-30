@@ -8,8 +8,8 @@ using DataFrames
 #true_alpha =  [-1.5,-.8,-.5,-.2,0.,.2,.5,.8,1.5]
 #true_init = [ -1,-.6,-.4,-.1,0.,.1,.4,.6,1.]
 
-bif_type, alpha, init = 1,9,4
-alpha2, init2 = 9,5
+bif_type, alpha, init = 3,9,2
+alpha2, init2 = 9,7
 x = read_bifurfile(bif_type, alpha, init)
 x2 = read_bifurfile(bif_type, alpha2, init2)
 st = length(x)
@@ -65,11 +65,4 @@ plot(t, Flux.data(pred[1,:]), label = string("trianed pred "), grid = "off")
 pred = n_ode([200.])
 plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species1))
 # Delete readme for this!
-# @save "saddle_bifur.bson" dudt
-
-grid_range = [range(-1, step = 0.1, stop = 1)]
-coord_list = get_coord_list_1d(grid_range)
-t = get_saddle_data()[:,1]
-predics = dostuff(n_ode, coord_list)
-test_plt = test_plots(t, x, predics)
-display(test_plt)
+# @save "pitchfork_bifur.bson" dudt
