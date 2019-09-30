@@ -25,9 +25,9 @@ plt_train = plot_train_1d(t, ode_data, pred, species)
 display(plt_train)
 savefig("train_plot.pdf")
 ################## Visualise vector field via quiver with observed path (no time dim).
-list_inits=[[0.0], [0.1], [0.2], [0.3]]
+list_inits = [[0.0], [0.1], [0.2], [0.3]]
 predics = dostuff(n_ode, coord_list)
 ts = saddle_bifur[:,1]
-test_plt= test_plots(ts, x, predics)
+test_plt = test_plots(ts, x, predics)
 display(test_plt)
 savefig("test_plot.pdf")
