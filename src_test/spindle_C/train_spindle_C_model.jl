@@ -70,5 +70,6 @@ scatter!(t, ode_data[3,:], label = string("Observation: ", species[3]))
 plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species[1]))
 plot!(t, Flux.data(pred[2,:]), label = string("Prediction: ", species[2]))
 plot!(t, Flux.data(pred[3,:]), label = string("Prediction: ", species[3]))
+
 # Delete readme for this!
 # @save "spindle_C.bson" dudt
