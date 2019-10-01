@@ -2,7 +2,6 @@ push!(LOAD_PATH, "/Users/eroesch/github")
 using vfa, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
 using BSON: @save
 using DataFrames
-#DiffEqParamEstim, Flux, DiffEqFlux, OrdinaryDiffEq
 
 #works via index
 #true_alpha =  [-1.5,-.8,-.5,-.2,0.,.2,.5,.8,1.5]
@@ -19,9 +18,9 @@ u0 = [x[1]]
 u02 = [x2[1]]
 tspan = (0.0f0, 3.f0)
 t = range(tspan[1], tspan[2], length = st)
-species1 = "Saddle-node Bifurcation"
+species1 = "Pitchfork Bifurcation"
 
-ode_data
+
 scatter(t, ode_data[1,:], grid = "off", xlab = "time", ylab = "Species U", label = "Observation: System undegoing Saddle node bifurcation")
 scatter!(t, ode_data2[1,:], grid = "off", xlab = "time", ylab = "Species U", label = "Observation: System undegoing Saddle node bifurcation")
 

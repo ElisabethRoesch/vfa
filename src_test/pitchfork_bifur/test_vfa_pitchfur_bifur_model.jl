@@ -10,16 +10,21 @@ grid_range = [range(-1, step = 0.1, stop = 1)]
 coord_list = get_coord_list_1d(grid_range)
 ################## Get neural ODE model.
 @load "src_test/pitchfork_bifur/pitchfork_bifur.bson" dudt
-species = ["System undergoing Saddle-node bifurcation"]
-x = saddle_bifur[:,2]
+species = ["System undergoing Pitchfork bifurcation"]
+bif_type, alpha, init = 3,9,2
+alpha2, init2 = 9,7
+x = read_bifurfile(bif_type, alpha, init)
+x2 = read_bifurfile(bif_type, alpha2, init2)
 st = length(x)
-ode_data = transpose(hcat(x[1:st]))
+ode_data = x
+ode_data2 = x2
 u0 = [x[1]]
+u02 = [x2[1]]
 tspan = (0.0f0, 3.f0)
 t = range(tspan[1], tspan[2], length = st)
 n_ode = x->neural_ode(dudt, x, tspan, Rosenbrock23(autodiff=false), saveat=t, reltol=1e-7, abstol=1e-9)
 pred = n_ode(u0)
-grad_list, end_coord_list = get_grad_and_end_point_list_1d(coord_list, dudt)
+pred2 = n_ode(u02)
 ################## Prediction on training data, species over time.
 plt_train = plot_train_1d(t, ode_data, pred, species)
 display(plt_train)
