@@ -24,23 +24,20 @@ species1 = "Pitchfork Bifurcation"
 scatter(t, ode_data[1,:], grid = "off", xlab = "time", ylab = "Species U", label = "Observation: System undegoing Saddle node bifurcation")
 scatter!(t, ode_data2[1,:], grid = "off", xlab = "time", ylab = "Species U", label = "Observation: System undegoing Saddle node bifurcation")
 
-dudt = Chain(Dense(1,100,tanh),
-       Dense(100,100,tanh),
-        Dense(100,100,tanh),
-       Dense(100,1))
+dudt = Chain(Dense(1,15,tanh),
+       Dense(15,15,tanh),
+       Dense(15,1))
 ps = Flux.params(dudt)
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
-n_epochs = 100
+n_epochs = 500
 data1 = Iterators.repeated((), n_epochs)
-opt1 = ADAM(0.001)
-#opt = Descent(0.1)
+#opt1 = ADAM(0.0001)
+opt1 = Descent(0.0001)
 L2_loss_fct() = sum(abs2,ode_data .- n_ode(u0))+sum(abs2,ode_data2 .- n_ode(u02))
 # Callback function to observe two stage training.
 cb1 = function ()
     println(Tracker.data(L2_loss_fct()))
 end
-
-
 pred = n_ode(u0)
 scatter(t, ode_data[1,:], label = string("Observation: ", species1), grid = "off")
 plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species1))
@@ -65,4 +62,5 @@ plot(t, Flux.data(pred[1,:]), label = string("trianed pred "), grid = "off")
 pred = n_ode([200.])
 plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species1))
 # Delete readme for this!
-# @save "src_test/pitchfork_bifur/pitchfork_bifur.bson" dudt
+ @save "src_test/pitchfork_bifur/pitchfork_bifur.bson" dudt
+#1,20 . 20 20. 20 1, 0.0001 descent
