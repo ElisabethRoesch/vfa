@@ -33,6 +33,7 @@ n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-
 n_epochs = 100
 data1 = Iterators.repeated((), n_epochs)
 opt1 = ADAM(0.001)
+#opt = Descent(0.1)
 L2_loss_fct() = sum(abs2,ode_data .- n_ode(u0))+sum(abs2,ode_data2 .- n_ode(u02))
 # Callback function to observe two stage training.
 cb1 = function ()
@@ -64,4 +65,4 @@ plot(t, Flux.data(pred[1,:]), label = string("trianed pred "), grid = "off")
 pred = n_ode([200.])
 plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species1))
 # Delete readme for this!
-# @save "pitchfork_bifur.bson" dudt
+# @save "src_test/pitchfork_bifur/pitchfork_bifur.bson" dudt

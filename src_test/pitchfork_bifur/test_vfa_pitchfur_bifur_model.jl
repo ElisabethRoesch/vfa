@@ -13,8 +13,9 @@ coord_list = get_coord_list_1d(grid_range)
 species = ["System undergoing Pitchfork bifurcation"]
 bif_type, alpha, init = 3,9,2
 alpha2, init2 = 9,7
-x = read_bifurfile(bif_type, alpha, init)
-x2 = read_bifurfile(bif_type, alpha2, init2)
+x = reshape(read_bifurfile(bif_type, alpha, init),11)
+x2 = reshape(read_bifurfile(bif_type, alpha2, init2),11)
+trains = [x,x2]
 st = length(x)
 ode_data = x
 ode_data2 = x2
@@ -28,12 +29,11 @@ pred2 = n_ode(u02)
 ################## Prediction on training data, species over time.
 plt_train = plot_train_1d(t, ode_data, pred, species)
 display(plt_train)
-savefig("train_plot.pdf")
+savefig("src_test/pitchfork_bifur/train_plot.pdf")
 ################## Visualise vector field via quiver with observed path (no time dim).
 predics = dostuff(n_ode, coord_list)
 saddle_bifur = get_saddle_data()
 ts = saddle_bifur[:,1]
-test_plt = test_plots(ts, x, predics)
-#plot(ts, predics[2][1,:],color="blue", label= "test")
-#display(test_plt)
-#savefig("test_plot.pdf")
+test_plt = test_plots(ts, trains, predics)
+display(test_plt)
+savefig("src_test/pitchfork_bifur/test_plot.pdf")
