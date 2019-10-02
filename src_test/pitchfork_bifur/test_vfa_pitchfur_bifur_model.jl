@@ -27,9 +27,9 @@ n_ode = x->neural_ode(dudt, x, tspan, Rosenbrock23(autodiff=false), saveat=t, re
 pred = n_ode(u0)
 pred2 = n_ode(u02)
 ################## Prediction on training data, species over time.
-plt_train = plot_train_1d(t, ode_data, pred, species)
-display(plt_train)
-savefig("src_test/pitchfork_bifur/train_plot.pdf")
+#plt_train = plot_train_1d(t, ode_data, pred, species)
+#display(plt_train)
+#savefig("src_test/pitchfork_bifur/train_plot.pdf")
 ################## Visualise vector field via quiver with observed path (no time dim).
 predics = dostuff(n_ode, coord_list)
 saddle_bifur = get_saddle_data()
