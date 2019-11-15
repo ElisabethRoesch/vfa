@@ -1,6 +1,8 @@
-push!(LOAD_PATH, "/Users/eroesch/github")
-using vfa, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
+push!(LOAD_PATH, "/home/elisabeth/github/")
+using vfa
+using  Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
 using BSON: @save, @load
+print("HI")
 ################## Get observed data.
 # saddle_bifur = get_saddle_data()
 # plt_path = plot_path_1d(saddle_bifur[:,2])
@@ -9,7 +11,7 @@ using BSON: @save, @load
 grid_range = [range(-1, step = 0.1, stop = 1)]
 coord_list = get_coord_list_1d(grid_range)
 ################## Get neural ODE model.
-@load "src_test/pitchfork_bifur/pitchfork_bifur.bson" dudt
+@load "src_test/bifurcations_1d/pitchfork_bifur/pitchfork_bifur.bson" dudt
 species = ["System undergoing Pitchfork bifurcation"]
 bif_type, alpha, init = 3,9,2
 alpha2, init2 = 9,7
