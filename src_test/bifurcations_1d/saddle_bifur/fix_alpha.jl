@@ -2,7 +2,6 @@ push!(LOAD_PATH, "/home/elisabeth/github/")
 using vfa
 using  DifferentialEquations, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
 using BSON: @save, @load
-
 datasize = 35
 alpha, tspan, solver = -2.0,(0,2.0),Tsit5()
 t = range(tspan[1], tspan[2], length = datasize)
