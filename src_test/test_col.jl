@@ -1,4 +1,4 @@
-using Flux, DiffEqFlux, OrdinaryDiffEq, DiffEqParamEstim, Plots, Optim, Dates
+using Flux, DiffEqFlux, OrdinaryDiffEq, DiffEqParamEstim, Plots, Optim, Dates, LinearAlgebra
 using BSON: @save
 
 mutable struct saver
@@ -30,8 +30,9 @@ function trueODEfunc(du, u, p, t)
 end
 prob = ODEProblem(trueODEfunc, u0, tspan)
 ode_data = Array(solve(prob,Tsit5(),saveat=t))
-test = [1.,8.]
-# du, u , p ,t  
+test_out = [1.,80.]
+test_in = [1.,80.]
+# du, u , p ,t
 prob.f(test,[1.,2.],1.,1.9)
 test
 scatter(t, ode_data[1,:], label="Observation: species 1", grid = "off")
@@ -41,7 +42,7 @@ dudt = Chain(x -> x.^3,
        Dense(30,2))
 ps = Flux.params(dudt)
 function node_two_stage_function(model, x, tspan, saveat, ode_data,
-            args...; kwargs...)
+            args0; kwargs0)
   dudt_(du,u,p,t) = du .= model(u)
   prob_fly = ODEProblem(dudt_,x,tspan)
   two_stage_method(prob_fly, saveat, ode_data)
@@ -87,3 +88,27 @@ scatter(t, ode_data[1,:], label = "data", grid = "off")
 scatter!(t, ode_data[2,:], label = "data")
 plot!(t, Flux.data(pred[1,:]), label = "prediction")
 plot!(t, Flux.data(pred[2,:]), label = "prediction")
+
+
+t = 0.2
+tpoints = t
+n = length(tpoints)
+n=35
+h = (n^(-1/5))*(n^(-3/35))*((log(n))^(-1/16))
+function construct_t1(t,tpoints)
+    T1 = []
+    for i in 1:length(tpoints)
+        push!(T1,[1 tpoints[i]-t])
+    end
+    foldl(vcat,T1)
+end
+function construct_w(t,tpoints,h,kernel_function)
+    n = length(tpoints)
+    W = zeros(n)
+    for i in 1:n
+        W[i] = kernel_function((tpoints[i]-t)/h)/h
+    end
+    Matrix(Diagonal(W))
+end
+W = construct_w(t,tpoints,h,Epanechnikov_kernel)
+construct_t1()
