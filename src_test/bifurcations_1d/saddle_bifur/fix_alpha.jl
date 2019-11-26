@@ -14,7 +14,6 @@ function run_saddle_one_u0(u0)
     obs = Array(solve(prob, solver,saveat=t))
     return obs[1,:]
 end
-
 function run_saddle_multi_u0(u0s)
     obs =[]
     for i in u0s
@@ -22,7 +21,6 @@ function run_saddle_multi_u0(u0s)
     end
     obs
 end
-
 train_u0s = [-2.,-1.,0.,1.0,2.0]
 ode_data = run_saddle_multi_u0(train_u0s)
 plot(Array(range(1,stop = length(ode_data[1]))),ode_data[1])
@@ -30,8 +28,6 @@ plot!(Array(range(1,stop = length(ode_data[2]))),ode_data[2])
 plot!(Array(range(1,stop = length(ode_data[3]))),ode_data[3])
 plot!(Array(range(1,stop = length(ode_data[4]))),ode_data[4])
 plot!(Array(range(1,stop = length(ode_data[5]))),ode_data[5])
-
-
 
 
 dudt = Chain(Dense(1,15,tanh),
