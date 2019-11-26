@@ -69,6 +69,7 @@ scatter!(t, esti[2,:], label = "esti")
 
 # Defining anonymous function for the neural ODE with the model. in: u0, out: solution with current params.
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
+n_ode(u0)
 n_epochs = 5000
 verify = 50 # for <verify>th epoch the L2 is calculated
 data1 = Iterators.repeated((), n_epochs)
@@ -97,7 +98,7 @@ scatter(t, ode_data[1,:], label = "data", grid = "off")
 scatter!(t, ode_data[2,:], label = "data")
 plot!(t, Flux.data(pred[1,:]), label = "prediction")
 plot!(t, Flux.data(pred[2,:]), label = "prediction")
-
+print("a")
 header = string("col losses: ", sa.times[end] - sa.times[1])
 plot(range(1,stop=length(sa.l2s)),sa.l2s,label = "l2s", grid = "off")
 plot!(range(1,stop=length(sa.losses)),sa.losses,width  =2, label = header)

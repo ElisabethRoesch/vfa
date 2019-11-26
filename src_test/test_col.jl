@@ -35,7 +35,6 @@ test_in = [1.,2.]
 # du, u , p ,t
 
 prob.f(test_out,test_in,1.,1.9)
-test
 scatter(t, ode_data[1,:], label="Observation: species 1", grid = "off")
 scatter!(t, ode_data[2,:], label="Observation: species 2", xlab = "time", ylab="Species")
 dudt = Chain(x -> x.^3,
