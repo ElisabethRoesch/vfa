@@ -28,7 +28,7 @@ u0 = Float32[2.; 0.]
 # Number of evaluations of the neural ODE. It relates to the numbers of layers of the neural net (depth of network).
 datasize = 30
 # Time span in which of evaluation will be and actual timepoints of evaluations
-tspan = (0.0f0, 1.5f0)
+tspan = (0.0f0, 3.5f0)
 t = range(tspan[1], tspan[2], length = datasize)
 # The true ODE (with the true parameters) which the neural net should learn
 function trueODEfunc(du, u, p, t)
@@ -41,7 +41,7 @@ ode_data = Array(solve(prob,Tsit5(),saveat=t))
 scatter(t, ode_data[1,:], label="Observation: species 1", grid = "off")
 scatter!(t, ode_data[2,:], label="Observation: species 2", xlab = "time", ylab="Species")
 
-# Building a neural ODE 
+# Building a neural ODE
 # Derivative is modeled by a neural net. Chain concatinates the functions ode function and two dense layers.
 dudt = Chain(x -> x.^3,
        Dense(2,50,tanh),
@@ -58,23 +58,34 @@ end
 loss_n_ode = node_two_stage_function(dudt, u0, tspan, t, ode_data, Tsit5(), reltol=1e-7, abstol=1e-9)
 #  loss function
 two_stage_loss_fct()=loss_n_ode.cost_function(ps)
+
+esti =loss_n_ode.estimated_solution
+scatter(t, ode_data[1,:], label = "data", grid = "off")
+scatter!(t, ode_data[2,:], label = "data")
+scatter!(t, esti[1,:], label = "esti", grid = "off")
+scatter!(t, esti[2,:], label = "esti")
+
+
+
 # Defining anonymous function for the neural ODE with the model. in: u0, out: solution with current params.
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
 n_epochs = 5000
-verify = 50 # for <verify>th epoch the L2 is calculated  
+verify = 50 # for <verify>th epoch the L2 is calculated
 data1 = Iterators.repeated((), n_epochs)
-opt1 = ADAM(0.1)
+opt1 = Descent(0.01)
 sa = saver(n_epochs)
 L2_loss_fct() = sum(abs2,ode_data .- n_ode(u0))
 # Callback function to observe two stage training.
 cb1 = function ()
     sa.count_epochs = sa.count_epochs +  1
     if mod(sa.count_epochs-1, verify)==0
-        update_saver(sa, Tracker.data(two_stage_loss_fct()),Tracker.data(L2_loss_fct()),Dates.Time(Dates.now()))
+        #update_saver(sa, Tracker.data(two_stage_loss_fct()),Tracker.data(L2_loss_fct()),Dates.Time(Dates.now()))
+        update_saver(sa, Tracker.data(two_stage_loss_fct()),0,Dates.Time(Dates.now()))
+
         # println("\"",Tracker.data(two_stage_loss_fct()),"\" \"",Dates.Time(Dates.now()),"\";")
     else
         update_saver(sa, Tracker.data(two_stage_loss_fct()),0,Dates.Time(Dates.now()))
-        # println("\"",Tracker.data(two_stage_loss_fct()),"\" \"",Dates.Time(Dates.now()),"\";")
+        println("\"",Tracker.data(two_stage_loss_fct()),"\" \"",Dates.Time(Dates.now()),"\";")
     end
 end
 
