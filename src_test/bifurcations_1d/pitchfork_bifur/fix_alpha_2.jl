@@ -1,8 +1,7 @@
 push!(LOAD_PATH, "/home/elisabeth/github/")
 using vfa
 using  DifferentialEquations, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
-using BSON: @save, @load
-
+using BSON: @save, @loadß
 datasize = 35
 alpha, tspan, solver = 5.0,(0,2.0),Tsit5()
 t = range(tspan[1], tspan[2], length = datasize)
@@ -15,7 +14,6 @@ function run_pfsuper_one_u0(u0)
     obs = Array(solve(prob, solver,saveat=t))
     return obs[1,:]
 end
-
 function run_pfsuper_multi_u0(u0s)
     obs =[]
     for i in u0s
