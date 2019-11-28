@@ -94,6 +94,7 @@ end
 @time Flux.train!(two_stage_loss_fct, ps, data1, opt1, cb = cb1)
 pred = n_ode(u0)
 
+
 scatter(t, ode_data[1,:], label = "data", grid = "off")
 scatter!(t, ode_data[2,:], label = "data")
 plot!(t, Flux.data(pred[1,:]), label = "prediction")
