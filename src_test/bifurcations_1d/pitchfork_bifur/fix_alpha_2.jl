@@ -1,9 +1,11 @@
 
 push!(LOAD_PATH, "/Users/eroesch/github")
-using vfa
-using  DifferentialEquations, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
-using BSON: @save, @loadß
+using vfa, GR
+using  DifferentialEquations
+using Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
+using BSON: @save, @load
 datasize = 35
+
 alpha, tspan, solver = 5.0,(0,2.0),Tsit5()
 t = range(tspan[1], tspan[2], length = datasize)
 function run_pfsuper_one_u0(u0)
