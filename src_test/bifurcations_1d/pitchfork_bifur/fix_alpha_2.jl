@@ -1,4 +1,5 @@
-push!(LOAD_PATH, "/home/elisabeth/github/")
+
+push!(LOAD_PATH, "/Users/eroesch/github")
 using vfa
 using  DifferentialEquations, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
 using BSON: @save, @loadß
