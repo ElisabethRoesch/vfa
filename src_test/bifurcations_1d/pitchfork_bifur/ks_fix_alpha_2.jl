@@ -43,7 +43,6 @@ n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-
 n_epochs = 200
 data1 = Iterators.repeated((), n_epochs)
 opt1 = Descent(0.0005)
-Array{Float64,1}(1000)
 function kolmogorov_smirnov_distance(data1,data2)
             ecdf_func_1 = StatsBase.ecdf(data1)
             ecdf_func_2 = StatsBase.ecdf(data2)
@@ -83,6 +82,7 @@ for i in test_u0s
     push!(preds, pred[1,:])
 end
 
+print(typeof(ode_data[1]))
 
 plot(Array(range(1,stop = datasize)),preds[1])
 plot!(Array(range(1,stop = datasize)),preds[2])
