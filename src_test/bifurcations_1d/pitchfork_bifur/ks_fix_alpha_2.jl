@@ -82,7 +82,7 @@ for i in test_u0s
     push!(preds, pred[1,:])
 end
 
-print(typeof(ode_data[1]))
+print(typeof(ode_data[1])
 
 plot(Array(range(1,stop = datasize)),preds[1])
 plot!(Array(range(1,stop = datasize)),preds[2])
