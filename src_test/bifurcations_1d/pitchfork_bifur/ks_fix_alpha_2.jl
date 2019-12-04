@@ -33,8 +33,6 @@ plot!(Array(range(1,stop = datasize)),ode_data[3])
 plot!(Array(range(1,stop = datasize)),ode_data[4])
 plot!(Array(range(1,stop = datasize)),ode_data[5])
 
-
-
 dudt = Chain(Dense(1,15,tanh),
        Dense(15,15,tanh),
        Dense(15,1))
