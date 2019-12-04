@@ -24,7 +24,7 @@ end
 
 # Observation
 # Start conditions for the two species in the system
-u0 = Float32[2.; 0.]
+u0 = Float32[0.0; 1.]
 # Number of evaluations of the neural ODE. It relates to the numbers of layers of the neural net (depth of network).
 datasize = 30
 # Time span in which of evaluation will be and actual timepoints of evaluations
@@ -32,9 +32,11 @@ tspan = (0.0f0, 1.5f0)
 t = range(tspan[1], tspan[2], length = datasize)
 # The true ODE (with the true parameters) which the neural net should learn
 function trueODEfunc(du, u, p, t)
-  true_A = [-0.1 2.0; -2.0 -0.1]
-  du .= ((u.^3)'true_A)'
+  true_A = [1. .0; 1. -1.]
+  #true_A = [-0.1 2.0; -2.0 -0.1]
+  du .= ((u)'true_A)'
 end
+
 # Construction of the ODEProblem and solving the ODEProblem with Tsit5 solver
 prob = ODEProblem(trueODEfunc, u0, tspan)
 ode_data = Array(solve(prob,Tsit5(),saveat=t))
@@ -43,8 +45,7 @@ scatter!(t, ode_data[2,:], label="Observation: species 2", xlab = "time", ylab="
 
 # Building a neural ODE
 # Derivative is modeled by a neural net. Chain concatinates the functions ode function and two dense layers.
-dudt = Chain(x -> x.^3,
-       Dense(2,50,tanh),
+dudt = Chain(Dense(2,50,tanh),
        Dense(50,2))
 # Parameters of the model which are to be learnt. They are: W1 (2x50), b1 (50), W2 (50x2), b2 (2)
 ps = Flux.params(dudt)
@@ -70,8 +71,8 @@ scatter!(t, esti[2,:], label = "esti")
 # Defining anonymous function for the neural ODE with the model. in: u0, out: solution with current params.
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
 n_ode(u0)
-n_epochs = 5000
-verify = 50 # for <verify>th epoch the L2 is calculated
+n_epochs = 2000
+verify = 500 # for <verify>th epoch the L2 is calculated
 data1 = Iterators.repeated((), n_epochs)
 opt1 = Descent(0.01)
 sa = saver(n_epochs)
@@ -92,13 +93,43 @@ end
 
 # train n_ode with collocation method
 @time Flux.train!(two_stage_loss_fct, ps, data1, opt1, cb = cb1)
+
 pred = n_ode(u0)
-
-
 scatter(t, ode_data[1,:], label = "data", grid = "off")
 scatter!(t, ode_data[2,:], label = "data")
 plot!(t, Flux.data(pred[1,:]), label = "prediction")
 plot!(t, Flux.data(pred[2,:]), label = "prediction")
+
+fix_X = 0.5
+list_Ys = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.]
+list_dX = []
+list_dY = []
+
+for i in list_Ys
+    temp = Flux.data(dudt([fix_X, i]))
+    push!(list_dX,temp[1])
+    push!(list_dY,temp[2])
+end
+list_dX
+list_dY
+scatter(list_dX,list_dY, xlab = "dX", ylab = "dY", label = "fix X = 0.5")
+
+
+fix_Y = 0.5
+list_Xs = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.]
+list_dX2 = []
+list_dY2 = []
+
+for i in list_Xs
+    temp = Flux.data(dudt([i, fix_Y]))
+    push!(list_dX2,temp[1])
+    push!(list_dY2,temp[2])
+end
+list_dX2
+list_dY2
+scatter(list_dY2,list_dX2, xlab = "dY", ylab = "dX", label = "fix Y = 0.5")
+
+
 print("a")
 header = string("col losses: ", sa.times[end] - sa.times[1])
 plot(range(1,stop=length(sa.l2s)),sa.l2s,label = "l2s", grid = "off")
