@@ -32,7 +32,8 @@ tspan = (0.0f0, 1.5f0)
 t = range(tspan[1], tspan[2], length = datasize)
 # The true ODE (with the true parameters) which the neural net should learn
 function trueODEfunc(du, u, p, t)
-  true_A = [1. .0; 1. -1.]
+  true_A = [1. .0; 1. 1.]
+  #true_A = [1. .0; -1. 1.]
   #true_A = [-0.1 2.0; -2.0 -0.1]
   du .= ((u)'true_A)'
 end
@@ -40,9 +41,9 @@ end
 # Construction of the ODEProblem and solving the ODEProblem with Tsit5 solver
 prob = ODEProblem(trueODEfunc, u0, tspan)
 ode_data = Array(solve(prob,Tsit5(),saveat=t))
-scatter(t, ode_data[1,:], label="Observation: species 1", grid = "off")
+scatter(t, ode_data[1,:], label="Observation: species 1", grid = "off",legend =:bottomleft)
 scatter!(t, ode_data[2,:], label="Observation: species 2", xlab = "time", ylab="Species")
-
+savefig("obs1.pdf")
 # Building a neural ODE
 # Derivative is modeled by a neural net. Chain concatinates the functions ode function and two dense layers.
 dudt = Chain(Dense(2,50,tanh),
@@ -71,7 +72,7 @@ scatter!(t, esti[2,:], label = "esti")
 # Defining anonymous function for the neural ODE with the model. in: u0, out: solution with current params.
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
 n_ode(u0)
-n_epochs = 2000
+n_epochs = 1000
 verify = 500 # for <verify>th epoch the L2 is calculated
 data1 = Iterators.repeated((), n_epochs)
 opt1 = Descent(0.01)
@@ -100,23 +101,30 @@ scatter!(t, ode_data[2,:], label = "data")
 plot!(t, Flux.data(pred[1,:]), label = "prediction")
 plot!(t, Flux.data(pred[2,:]), label = "prediction")
 
-fix_X = 0.5
-list_Ys = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.]
-list_dX = []
-list_dY = []
-
-for i in list_Ys
-    temp = Flux.data(dudt([fix_X, i]))
-    push!(list_dX,temp[1])
-    push!(list_dY,temp[2])
+grid_form= Array(range(-3.,stop =3,step =0.1))
+list_Ys = grid_form
+list_Xs = grid_form
+list_dX_dYs =[]
+for i in list_Xs
+    tempX_list=[]
+    tempY_list=[]
+    for j in list_Ys
+        tempX = Flux.data(dudt([i, j]))[1]
+        tempY = Flux.data(dudt([i, j]))[2]
+        push!(tempX_list,tempX)
+        push!(tempY_list,tempY)
+    end
+    push!(list_dX_dYs,[tempX_list,tempY_list])
 end
-list_dX
-list_dY
-scatter(list_dX,list_dY, xlab = "dX", ylab = "dY", label = "fix X = 0.5")
 
+a= scatter(list_dX_dYs[1,1][1],list_dX_dYs[1,1][2], xlab = "dX", label = "true_A = [1. .0; -1. 1.]", ylab = "dY")
+for i in range(2,length(list_Xs))
+    fix_X=list_Ys[i]
+    scatter!(list_dX_dYs[i,1][1],list_dX_dYs[i,1][2], xlab = "dX", ylab = "dY", label = "")
+end
+display(a)
+savefig("dXdY.pdf")
 
-fix_Y = 0.5
-list_Xs = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.]
 list_dX2 = []
 list_dY2 = []
 
