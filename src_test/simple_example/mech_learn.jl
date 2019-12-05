@@ -21,16 +21,18 @@ function update_saver(saver, loss_i, l2_i, time_i)
     saver.l2s[epoch_i] = l2_i
     saver.times[epoch_i] = time_i
 end
-u0 = Float32[0.0; 1.]
+u0 = Float32[0.5; -.4]
 datasize = 30
 tspan = (0.0f0, 1.5f0)
 t = range(tspan[1], tspan[2], length = datasize)
 
-label_plot = "enhance_medium"
-#label_plot = "inhibit_medium"
+
+label_plot = "enhance_strong"
+label_plot = "inhibit_strong"
+label_plot = "nothing_strong"
 function trueODEfunc(du, u, p, t)
-  true_A = [1. .0; 1. 1.]
-  du .= ((u)'true_A)'
+  true_A = [1. .0; 0. 1.]
+  du .= ((u.^3)'true_A)'
 end
 
 prob = ODEProblem(trueODEfunc, u0, tspan)
@@ -63,7 +65,7 @@ savefig(string("plots/",label_plot,"_esti.pdf"))
 # Defining anonymous function for the neural ODE with the model. in: u0, out: solution with current params.
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
 n_ode(u0)
-n_epochs = 1000
+n_epochs = 2000
 verify = 500 # for <verify>th epoch the L2 is calculated
 data1 = Iterators.repeated((), n_epochs)
 opt1 = Descent(0.01)
@@ -121,7 +123,7 @@ a= scatter(list_dX_dYs[1,1][1],list_dX_dYs[1,1][2], titlefontsize=7,
             grid = "off", xlab = "dX", label = "Gradients",
             title = string("PCA results: proj: ", round.(M.proj,digits=3), ", prinvars: ",
             round.(M.prinvars,digits=3), ", tprinvar: " ,round.(M.tprinvar,digits=3), " ,tvar: ",round.(M.tvar,digits=3),"."),
-            ylab = "dY", legend =:topleft)
+            ylab = "dY", legend =:bottomleft)
 for i in range(2,stop=length(list_Xs))
     scatter!(list_dX_dYs[i,1][1],list_dX_dYs[i,1][2], xlab = "dX", ylab = "dY", label = "")
 end
@@ -130,13 +132,14 @@ savefig(string("plots/",label_plot,"_gradients.pdf"))
 
 
 
-# Plotting in trasformed data space
-transformed_all = transform(M, all)
-transformed_all[1,:]
-b=scatter(all[1:61], label = "", grid=:off)
-for i in 2:n
-    rang = Array(range(1+(i-1)*n,stop=(i)*n))
-    scatter!(all[rang],label="")
-end
-display(b)
-plot!([start_p[1],end_p[1]], [start_p[2],end_p[2]],  line=:arrow,label = "PCA")
+# Messy plotting in trasformed data space
+# transformed_all = transform(M, all)
+# transformed_all[1,:]
+# b=scatter(all[1:61], label = "", grid=:off)
+# for i in 2:n
+#     rang = Array(range(1+(i-1)*n,stop=(i)*n))
+#     scatter!(all[rang],label="")
+# end
+# display(b)
+# plot!([start_p[1],end_p[1]], [start_p[2],end_p[2]],  line=:arrow,label = "PCA")
+#
