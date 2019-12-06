@@ -1,7 +1,6 @@
 
 using MultivariateStats, Flux, DiffEqFlux, OrdinaryDiffEq, DiffEqParamEstim, Plots, Optim, Dates
 using BSON: @save
-
 mutable struct saver
     losses::Array{Float64,1}
     l2s::Array{Float64,1}
@@ -25,10 +24,8 @@ u0 = Float32[0.5; -.4]
 datasize = 30
 tspan = (0.0f0, 1.5f0)
 t = range(tspan[1], tspan[2], length = datasize)
-
-
-label_plot = "enhance_strong"
-label_plot = "inhibit_strong"
+#label_plot = "enhance_strong"
+#label_plot = "inhibit_strong"
 label_plot = "nothing_strong"
 function trueODEfunc(du, u, p, t)
   true_A = [1. .0; 0. 1.]
