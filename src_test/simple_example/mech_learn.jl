@@ -57,18 +57,14 @@ scatter!(t, esti[1,:], label = "Estimation: Species 1")
 scatter!(t, esti[2,:], label = "Estimation: Species 2")
 savefig(string("plots/",label_plot,"_esti.pdf"))
 
-
-
-# Defining anonymous function for the neural ODE with the model. in: u0, out: solution with current params.
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
 n_ode(u0)
 n_epochs = 2000
-verify = 500 # for <verify>th epoch the L2 is calculated
+verify = 500
 data1 = Iterators.repeated((), n_epochs)
 opt1 = Descent(0.01)
 sa = saver(n_epochs)
 L2_loss_fct() = sum(abs2,ode_data .- n_ode(u0))
-# Callback function to observe two stage training.
 cb1 = function ()
     sa.count_epochs = sa.count_epochs +  1
     if mod(sa.count_epochs-1, verify)==0
