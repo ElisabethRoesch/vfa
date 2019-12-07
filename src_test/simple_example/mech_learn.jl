@@ -31,7 +31,6 @@ function trueODEfunc(du, u, p, t)
   true_A = [1. .0; 0. 1.]
   du .= ((u.^3)'true_A)'
 end
-
 prob = ODEProblem(trueODEfunc, u0, tspan)
 ode_data = Array(solve(prob,Tsit5(),saveat=t))
 scatter(t, ode_data[1,:], label="Observation: Species 1", grid = "off",legend =:topleft)
@@ -49,7 +48,6 @@ function node_two_stage_function(model, x, tspan, saveat, ode_data,
 end
 loss_n_ode = node_two_stage_function(dudt, u0, tspan, t, ode_data, Tsit5(), reltol=1e-7, abstol=1e-9)
 two_stage_loss_fct()=loss_n_ode.cost_function(ps)
-
 esti =loss_n_ode.estimated_solution
 scatter(t, ode_data[1,:], label = "Observation: Species 1", grid = "off",legend =:topleft)
 scatter!(t, ode_data[2,:], label = "Observation: Species 2")
@@ -70,7 +68,6 @@ cb1 = function ()
     if mod(sa.count_epochs-1, verify)==0
         #update_saver(sa, Tracker.data(two_stage_loss_fct()),Tracker.data(L2_loss_fct()),Dates.Time(Dates.now()))
         update_saver(sa, Tracker.data(two_stage_loss_fct()),0,Dates.Time(Dates.now()))
-
         # println("\"",Tracker.data(two_stage_loss_fct()),"\" \"",Dates.Time(Dates.now()),"\";")
     else
         update_saver(sa, Tracker.data(two_stage_loss_fct()),0,Dates.Time(Dates.now()))
@@ -92,7 +89,6 @@ list_Xs = grid_form
 n =length(list_Xs)
 m =length(u0)
 list_dX_dYs =[]
-
 for i in list_Xs
     tempX_list=[]
     tempY_list=[]
@@ -111,7 +107,6 @@ for i in 1:n
     global all[:,(i-1)*n+1:i*n] = r_t'
 end
 M = fit(PCA, all)
-
 a= scatter(list_dX_dYs[1,1][1],list_dX_dYs[1,1][2], titlefontsize=7,
             grid = "off", xlab = "dX", label = "Gradients",
             title = string("PCA results: proj: ", round.(M.proj,digits=3), ", prinvars: ",
