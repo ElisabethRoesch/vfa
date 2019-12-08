@@ -118,8 +118,6 @@ end
 scatter!(all[1,:],all[2,:], linewidth = 3, markeralpha = 0.00006,line=:blue,reg = true, label = "with regression line")
 savefig(string("plots/",label_plot,"_gradients.pdf"))
 
-
-
 # Messy plotting in trasformed data space
 # transformed_all = transform(M, all)
 # transformed_all[1,:]
