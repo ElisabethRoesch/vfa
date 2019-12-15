@@ -69,7 +69,6 @@ scatter!(t, ode_data[2,:], label = "Observation: Species 2")
 scatter!(t, esti[1,:], label = "Estimation: Species 1")
 scatter!(t, esti[2,:], label = "Estimation: Species 2")
 # savefig(string("plots/",label_plot,"_esti.pdf"))
-
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
 n_ode(u0)
 n_epochs = 2000
