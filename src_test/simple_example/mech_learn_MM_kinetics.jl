@@ -25,11 +25,11 @@ tspan = (0.0f0, 1.5f0)
 t = range(tspan[1], tspan[2], length = datasize)
 #label_plot = "enhance_strong"
 #label_plot = "inhibit_strong"
-label_plot = "negative_feedback_stronger"
+label_plot = "negative_feedback"
 function positive_feedback(du, u, p, t)
     my1, my2 = 1., 1.
     b1, b2 = 1., 1.
-    v1, v2 = 2., 2.
+    v1, v2 = 1., 1.
     k12 = 1.
     k21 = 1.
     n = 1
@@ -39,7 +39,7 @@ end
 function negative_feedback(du, u, p, t)
     my1, my2 = 1., 1.
     b1, b2 = 1., 1.
-    v1, v2 = 2., 2.
+    v1, v2 = 1., 1.
     k12 = 1.
     k21 = 1.
     n = 1
@@ -50,7 +50,7 @@ prob = ODEProblem(negative_feedback, u0, tspan)
 ode_data = Array(solve(prob,Tsit5(),saveat=t))
 scatter(t, ode_data[1,:], label="Observation: Species 1", grid = "off",legend =:topleft)
 scatter!(t, ode_data[2,:], label="Observation: Species 2", xlab = "time", ylab="Species")
-# savefig(string(label_plot,"_obs.pdf"))
+savefig(string("plots_mech_learning/", label_plot,"_obs.pdf"))
 
 dudt = Chain(Dense(2,50,tanh),
        Dense(50,2))
@@ -73,7 +73,7 @@ scatter!(t, esti[2,:], label = "Estimation: Species 2")
 n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
 n_ode(u0)
 n_epochs = 2000
-verify = 500
+verify = 50
 data1 = Iterators.repeated((), n_epochs)
 opt1 = Descent(0.01)
 sa = saver(n_epochs)
@@ -82,6 +82,28 @@ cb1 = function ()
     sa.count_epochs = sa.count_epochs +  1
     if mod(sa.count_epochs-1, verify)==0
         #update_saver(sa, Tracker.data(two_stage_loss_fct()),Tracker.data(L2_loss_fct()),Dates.Time(Dates.now()))
+        as = range(0, step = 0.2, stop = 2)
+        bs = range(0, step = 0.2, stop = 2)
+        cords = Array{Tuple{Real,Float64},1}(undef,length(as)*length(bs))
+        m = 1
+        for a in as
+            for b in bs
+                cords[m] = (a,b)
+                m = m+1
+            end
+        end
+        grads = []
+        for i in cords
+            cord = [i[1], i[2]]
+            grad = Flux.data(dudt(cord))
+            tuple = (grad[1], grad[2])
+            push!(grads, tuple)
+        end
+        quiv_plt=quiver(cords, size = (500,500), quiver=grads, grid = :off,framestyle = :box)
+        plot!(ode_data[1,:], ode_data[2,:],
+            linewidth =4, color = "red", xlab = "X", ylab = "Y", label = "",
+            legend=:bottomright, grid = "off")
+        display(quiv_plt)
         update_saver(sa, Tracker.data(two_stage_loss_fct()),0,Dates.Time(Dates.now()))
         # println("\"",Tracker.data(two_stage_loss_fct()),"\" \"",Dates.Time(Dates.now()),"\";")
     else
@@ -144,3 +166,25 @@ savefig(string("plots_mech_learning/",label_plot,"_gradients.pdf"))
 # display(b)
 # plot!([start_p[1],end_p[1]], [start_p[2],end_p[2]],  line=:arrow,label = "PCA")
 #
+as = range(0, step = 0.2, stop = 2)
+bs = range(0, step = 0.2, stop = 2)
+cords = Array{Tuple{Real,Float64},1}(undef,length(as)*length(bs))
+m = 1
+for a in as
+    for b in bs
+        cords[m] = (a,b)
+        global m = m+1
+    end
+end
+grads = []
+for i in cords
+    cord = [i[1], i[2]]
+    grad = Flux.data(dudt(cord))
+    tuple = (grad[1], grad[2])
+    push!(grads, tuple)
+end
+quiv_plt=quiver(cords, size = (500,500), quiver=grads, grid = :off,framestyle = :box)
+plot!(ode_data[1,:], ode_data[2,:],
+    linewidth =4, color = "red", xlab = "X", ylab = "Y", label = "",
+    legend=:bottomright, grid = "off")
+display(quiv_plt)
