@@ -1,1 +1,1 @@
-# Compare to systems of Miriam Paper 
+# Compare to systems of Miriam Paper
