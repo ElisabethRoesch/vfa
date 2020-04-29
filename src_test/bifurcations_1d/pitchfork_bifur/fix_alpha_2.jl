@@ -59,6 +59,7 @@ end
 
 cb1 = function ()
     println(Tracker.data(L2_loss_fct()))
+
 end
 test_u0s = [-3.,-2.5,-2.,-1.5,-1.,-0.5,0.,0.5,1.,1.5,2.,2.5,-3.]
 preds = []

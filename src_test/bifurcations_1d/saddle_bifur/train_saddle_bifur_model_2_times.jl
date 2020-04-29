@@ -30,14 +30,24 @@ dudt = Chain(Dense(1,100,tanh),
         Dense(100,100,tanh),
        Dense(100,1))
 ps = Flux.params(dudt)
-n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
-n_epochs = 100
-data1 = Iterators.repeated((), n_epochs)
+#n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
+n_ode = NeuralODE(dudt,tspan,Tsit5(),saveat=t)
+
 opt1 = ADAM(0.001)
-L2_loss_fct() = sum(abs2,ode_data .- n_ode(u0))+sum(abs2,ode_data2 .- n_ode(u02))
+#L2_loss_fct() = sum(abs2,ode_data .- n_ode(u0))+sum(abs2,ode_data2 .- n_ode(u02))
+function predict_n_ode(p, u_temp)
+  n_ode(u_temp,p)
+end
+function loss_n_ode(p)
+    pred1 = predict_n_ode(p,u0)
+    pred2 = predict_n_ode(p,u02)
+    loss = sum(abs2,ode_data .- n_ode(u0))+sum(abs2,ode_data2 .- n_ode(u02))
+    loss,pred
+end
+
 # Callback function to observe two stage training.
 cb1 = function ()
-    println(Tracker.data(L2_loss_fct()))
+    println("cb")
 end
 
 
@@ -46,7 +56,8 @@ scatter(t, ode_data[1,:], label = string("Observation: ", species1), grid = "off
 plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species1))
 
 # train n_ode with collocation method
-@time Flux.train!(L2_loss_fct, ps, data1, opt1, cb = cb1)
+# @time Flux.train!(L2_loss_fct, ps, data1, opt1, cb = cb1)
+res1 = DiffEqFlux.sciml_train(loss_n_ode, n_ode.p, ADAM(0.01), cb = cb1, maxiters = 5000)
 
 pred = n_ode(u0)
 pred2 = n_ode(u02)

@@ -19,9 +19,9 @@ function update_saver(saver, loss_i, l2_i, time_i)
     saver.l2s[epoch_i] = l2_i
     saver.times[epoch_i] = time_i
 end
-u0 = Float32[0.5; 2.]
+u0 = Float32[0; 2.]
 datasize = 30
-tspan = (0.0f0, 1.5f0)
+tspan = (0.0f0, 3f0)
 t = range(tspan[1], tspan[2], length = datasize)
 #label_plot = "enhance_strong"
 #label_plot = "inhibit_strong"
@@ -35,6 +35,7 @@ function positive_feedback(du, u, p, t)
     n = 1
     du[1] = b1 - u[1]my1+(v1/(1+(u[2]/k12)^n))
     du[2] = b2 - u[2]my2+(v2/(1+(u[1]/k21)^n))
+    return du
 end
 function negative_feedback(du, u, p, t)
     my1, my2 = 1., 1.
@@ -45,11 +46,40 @@ function negative_feedback(du, u, p, t)
     n = 1
     du[1] = b1 - u[1]my1-(v1/(1+(u[2]/k12)^n))
     du[2] = b2 - u[2]my2+(v2/(1+(u[1]/k21)^n))
+    return du
 end
 prob = ODEProblem(negative_feedback, u0, tspan)
 ode_data = Array(solve(prob,Tsit5(),saveat=t))
 scatter(t, ode_data[1,:], label="Observation: Species 1", grid = "off",legend =:topleft)
 scatter!(t, ode_data[2,:], label="Observation: Species 2", xlab = "time", ylab="Species")
+
+as = range(-5, step = 0.8, stop = 5)
+bs = range(-5, step = 0.8, stop = 5)
+cords = Array{Tuple{Real,Float64},1}(undef,length(as)*length(bs))
+ m = 1
+for a in as
+    for b in bs
+        cords[m] = (a,b)
+        global m = m+1
+    end
+end
+grads = []
+for i in cords
+    cord = [i[1], i[2]]
+    grad = positive_feedback([0.,0.], cord, 0.1, 0.1)
+
+    tuple = (grad[1], grad[2])
+    push!(grads, tuple)
+end
+quiv_plt=quiver(cords, size = (500,500), ylim = (-5,5) , xlim = (-5,5), title= "ositive feedback", quiver=grads, grid = :off,framestyle = :box)
+# plot!(ode_data[1,:], ode_data[2,:],
+#     linewidth =4, color = "red", xlab = "X", ylab = "Y", label = "",
+#     legend=:bottomright, grid = "off")
+display(quiv_plt)
+savefig(string("plots_mech_learning/negative_feedback_quiver.pdf"))
+
+
+
 savefig(string("plots_mech_learning/", label_plot,"_obs.pdf"))
 
 dudt = Chain(Dense(2,50,tanh),

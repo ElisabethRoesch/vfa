@@ -1,3 +1,4 @@
+# doesnt compile with new DiffEqFlux
 push!(LOAD_PATH, "/Users/eroesch/github")
 using vfa, Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
 using BSON: @save
@@ -54,8 +55,11 @@ end
 loss_n_ode = node_two_stage_function(dudt, u0, tspan, t, ode_data, Tsit5(), reltol=1e-7, abstol=1e-9)
 #  loss function
 two_stage_loss_fct()=loss_n_ode.cost_function(ps)
+two_stage_loss_fct()
 # Defining anonymous function for the neural ODE with the model. in: u0, out: solution with current params.
-n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9)
+#n_ode = x->neural_ode(dudt, x, tspan, Tsit5(), saveat=t, reltol=1e-7, abstol=1e-9) # old version
+n_ode = NeuralODE(dudt,tspan,Tsit5(),saveat=t)
+
 n_epochs = 5000
 verify = 50 # for <verify>th epoch the L2 is calculated
 data1 = Iterators.repeated((), n_epochs)
@@ -80,7 +84,8 @@ scatter(t, ode_data[1,:], label = string("Observation: ", species1), grid = "off
 plot!(t, Flux.data(pred[1,:]), label = string("Prediction: ", species1))
 
 # train n_ode with collocation method
-@time Flux.train!(two_stage_loss_fct, ps, data1, opt1, cb = cb1)
+#@time Flux.train!(two_stage_loss_fct, ps, data1, opt1, cb = cb1) # old version
+@time res1 = DiffEqFlux.sciml_train(two_stage_loss_fct, n_ode.p, ADAM(0.01), cb = cb1, maxiters = 5000)
 
 pred = n_ode(u0)
 scatter(t, ode_data[1,:], label = string("Observation "), grid = "off", legend=:bottomright,xlab = "time", ylab = "Species U",)
