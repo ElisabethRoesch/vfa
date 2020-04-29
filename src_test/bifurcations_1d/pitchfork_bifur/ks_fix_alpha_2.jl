@@ -5,7 +5,6 @@ using  DifferentialEquations, StatsBase
 using Plots, Optim, Dates, DiffEqParamEstim, Flux, DiffEqFlux, Statistics, LinearAlgebra, OrdinaryDiffEq
 using BSON: @save, @load
 datasize = 35
-
 alpha, tspan, solver = 5.0,(0,2.0),Tsit5()
 t = range(tspan[1], tspan[2], length = datasize)
 function run_pfsuper_one_u0(u0)
@@ -24,7 +23,6 @@ function run_pfsuper_multi_u0(u0s)
     end
     obs
 end
-
 train_u0s = [-2.,-1.,0.,1.0,2.0]
 ode_data = run_pfsuper_multi_u0(train_u0s)
 plot(Array(range(1,stop = datasize)),ode_data[1])
@@ -32,7 +30,6 @@ plot!(Array(range(1,stop = datasize)),ode_data[2])
 plot!(Array(range(1,stop = datasize)),ode_data[3])
 plot!(Array(range(1,stop = datasize)),ode_data[4])
 plot!(Array(range(1,stop = datasize)),ode_data[5])
-
 dudt = Chain(Dense(1,15,tanh),
        Dense(15,15,tanh),
        Dense(15,1))
@@ -57,8 +54,6 @@ function kolmogorov_smirnov_distance(data1,data2)
             dist = maximum(abs.(ecdf_vals_1-ecdf_vals_2))
             return dist
 end
-
-
 function loss_fct()
     sum = 0.0
     counter = 0
@@ -69,7 +64,6 @@ function loss_fct()
     end
     return sum
 end
-
 cb1 = function ()
     println(Tracker.data(loss_fct()))
 end
@@ -79,9 +73,6 @@ for i in test_u0s
     pred = Flux.data(n_ode([i]))
     push!(preds, pred[1,:])
 end
-
-print(typeof(ode_data[1])
-
 plot(Array(range(1,stop = datasize)),preds[1])
 plot!(Array(range(1,stop = datasize)),preds[2])
 plot!(Array(range(1,stop = datasize)),preds[3])
