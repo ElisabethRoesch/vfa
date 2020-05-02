@@ -8,8 +8,8 @@ display(plt_path)
 ################## Set points to get gradients of neural ODE.
 grid_range = [range(-1, step = 0.1, stop = 1)]
 coord_list = get_coord_list_1d(grid_range)
-################## Get neural ODE model.
-@load "src_test/saddle_bifur/saddle_bifur.bson" dudt
+################## Get neural ODE model. src_test/bifurcations_1d/saddle_bifur/saddle_bifur.bson
+@load "src_test/bifurcations_1d/saddle_bifur/saddle_bifur.bson" dudt
 species = ["System undergoing Saddle-node bifurcation"]
 x = saddle_bifur[:,2]
 st = length(x)
@@ -23,11 +23,11 @@ grad_list, end_coord_list = get_grad_and_end_point_list_1d(coord_list, dudt)
 ################## Prediction on training data, species over time.
 plt_train = plot_train_1d(t, ode_data, pred, species)
 display(plt_train)
-savefig("train_plot.pdf")
+#savefig("train_plot.pdf")
 ################## Visualise vector field via quiver with observed path (no time dim).
 list_inits = [[0.0], [0.1], [0.2], [0.3]]
 predics = dostuff(n_ode, coord_list)
 ts = saddle_bifur[:,1]
 test_plt = test_plots(ts, x, predics)
 display(test_plt)
-savefig("test_plot.pdf")
+#savefig("test_plot.pdf")
