@@ -79,8 +79,4 @@ for temp_ind_alpha in ind_alphas
 end
 display(plt_one_init_3d)
 
-
-plt_state_space = plot(grid = "off", xlab = "time", ylab = "Species U")
-latet_variable = [5,7,8,4,1,6,3,2,9]
-scatter!(inits, latet_space,label = "")
-display(plt_state_space)
+#@save "data/pitch_xes_latent_space.bson" xes
