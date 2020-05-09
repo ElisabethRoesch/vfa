@@ -7,3 +7,7 @@ using DataFrames
 dudt = Chain(Dense(1,15,tanh),
        Dense(15,15,tanh),
        Dense(15,1))
+
+tspan = (0.0f0, 3.f0)
+t = range(tspan[1], tspan[2], length = st)
+species = "Pitchfork Bifurcation"
