@@ -4,9 +4,9 @@ using BSON: @save
 using DataFrames
 
 
-dudt = Chain(Dense(1,15,tanh),
+dudt = Chain(Dense(2,15,tanh),
        Dense(15,15,tanh),
-       Dense(15,1))
+       Dense(15,2))
 
 tspan = (0.0f0, 3.f0)
 t = range(tspan[1], tspan[2], length = st)
