@@ -11,3 +11,7 @@ dudt = Chain(Dense(1,15,tanh),
 tspan = (0.0f0, 3.f0)
 t = range(tspan[1], tspan[2], length = st)
 species = "Pitchfork Bifurcation"
+
+
+
+# @save "src_test/pitchfork_bifur/constucted_latent_variables_pitchfork_bifur.bson" dudt
